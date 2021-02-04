@@ -1,7 +1,6 @@
 const express = require("express");
 const validUrl = require("valid-url");
 const shortId = require("shortid");
-const config = require("config");
 
 const URL = require("../models/url");
 
