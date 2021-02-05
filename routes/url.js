@@ -27,9 +27,8 @@ router.post("/generate", async (req, res) => {
     const shortURL = baseURL + urlCode;
 
     url = new URL({
-      long_url,
-      short_url: shortURL,
       url_code: urlCode,
+      long_url,
       date: new Date(),
     });
 

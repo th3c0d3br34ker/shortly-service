@@ -36,7 +36,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Shortly - URL Shortening Service </h3>
+  <h3 align="center">Shortly - URL Shortening Microservice </h3>
 
   <p align="center">
     An API to shorten URLs.
