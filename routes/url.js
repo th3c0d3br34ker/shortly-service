@@ -37,7 +37,7 @@ router.post("/generate", async (req, res) => {
       url_code: urlCode,
       long_url,
       base_url: baseURL,
-      date: new Date(),
+      date: new Date.now(),
     });
 
     await url.save();
