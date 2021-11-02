@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { Model, ModelCtor } from "sequelize/types";
+import validator from "validator";
+import { Model, ModelCtor, WhereOptions } from "sequelize/types";
 
 // project imports
 import { Url, UrlEntity } from "../core/entities/url";
@@ -7,6 +8,7 @@ import * as config from "../config";
 import { retryableDecorator } from "../utils";
 import logger from "../logger";
 import CoreError from "../core/errors";
+import { NotFoundError } from "../errors/api.error";
 
 export interface UrlDTO {
   long_url: Url["long_url"];
@@ -16,8 +18,8 @@ export interface UrlDTO {
 export interface IUrlService {
   addUrl(url: UrlDTO): Promise<UrlEntity>;
 
+  findUrlById(id: Url["id"]): Promise<UrlEntity>;
   findUrls(): Promise<UrlEntity[]>;
-  // findUrl(id: Url["id"]): Promise<UrlEntity>;
 }
 
 export class UrlService implements IUrlService {
@@ -74,6 +76,29 @@ export class UrlService implements IUrlService {
       );
 
       return urlEntities;
+    } catch (err) {
+      logger.error((err as Error).message, err);
+      throw new Error("Unable to fetch Urls");
+    }
+  }
+
+  async findUrlById(id: Url["id"]): Promise<UrlEntity> {
+    try {
+      if (!validator.isUUID(id)) {
+        throw new NotFoundError("Url not found!");
+      }
+
+      const whereOptions: WhereOptions = { id };
+
+      const url = await this._urlModel.findOne({
+        where: whereOptions,
+      });
+
+      if (url === null) {
+        throw new NotFoundError("Url not found!");
+      }
+
+      return UrlEntity.create(url.toJSON() as Url);
     } catch (err) {
       logger.error((err as Error).message, err);
       throw new Error("Unable to fetch Urls");

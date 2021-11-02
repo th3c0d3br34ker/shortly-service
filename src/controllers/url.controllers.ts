@@ -39,11 +39,33 @@ export class FindAllUrlsController extends BaseController {
     this._urlService = urlService;
   }
 
-  protected async executeImpl(req: Request, res: Response): Promise<void> {
+  protected async executeImpl(_: Request, res: Response): Promise<void> {
     try {
       const data = await this._urlService.findUrls();
 
-      BaseController.ok(res, { data });
+      BaseController.ok(res, data);
+    } catch (err) {
+      logger.error("get-urls-controller", err);
+      BaseController.fail(res, err as Error);
+    }
+  }
+}
+
+export class FindUrlByIdController extends BaseController {
+  private _urlService: IUrlService;
+
+  constructor(urlService: IUrlService) {
+    super();
+    this._urlService = urlService;
+  }
+
+  protected async executeImpl(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      const data = await this._urlService.findUrlById(id);
+
+      BaseController.ok(res, data);
     } catch (err) {
       logger.error("get-urls-controller", err);
       BaseController.fail(res, err as Error);
