@@ -13,7 +13,7 @@ export const NODE_ENV = process.env.NODE_ENV || "development";
 export const IS_TEST = NODE_ENV === "test" || false;
 
 export const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://localhost:5432/shortly-db";
+  process.env.DATABASE_URL || "postgres://postgres@localhost:5432/shortly-db";
 
 export const DB_NAME = process.env.DB_NAME || "shortly-db";
 

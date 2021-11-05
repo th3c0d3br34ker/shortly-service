@@ -1,23 +1,27 @@
 import fs from "fs";
 import path from "path";
-import { DataTypes, Sequelize } from "sequelize";
-// import * as config from "../config";
-// import databaseConfig from "./config";
+import { DataTypes, Options, Sequelize } from "sequelize";
+import databaseConfig from "./config";
 import logger from "../logger";
 
-// const env = config.NODE_ENV;
-// const dbConfig = databaseConfig[env as keyof typeof databaseConfig];
 const modelsPath = path.join(__dirname, "models");
 const models = Object.create(null);
 
-// let sequelize: Sequelize = new Sequelize(config.DATABASE_URL, {
-//   database: dbConfig.database,
-// });
+const databaseOptions: Options = {
+  dialect: "postgres",
+  logging: (msg: string) => logger.info("DATABASE", msg),
+  define: {
+    timestamps: true,
+    freezeTableName: true,
+    underscored: true,
+    charset: "utf8",
+  },
+};
 
-let sequelize = new Sequelize("sqlite::memory:", {
-  dialect: "sqlite",
-  logging: (args) => logger.debug("DATABASE", args),
-});
+let sequelize: Sequelize = new Sequelize(
+  databaseConfig.databaseUrl,
+  databaseOptions
+);
 
 fs.readdirSync(modelsPath).forEach(async (file: string) => {
   const model = require(path.join(__dirname, "models", file)).default(
