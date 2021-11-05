@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { DataTypes, Options, Sequelize } from "sequelize";
+import { DB_SSL } from "../config";
 import databaseConfig from "./config";
 import logger from "../logger";
 
@@ -15,6 +16,16 @@ const databaseOptions: Options = {
     freezeTableName: true,
     underscored: true,
     charset: "utf8",
+  },
+  dialectOptions: {
+    ...(DB_SSL
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        }
+      : {}),
   },
 };
 
