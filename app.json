@@ -1,0 +1,6 @@
+{
+  "name": "Shortly Service",
+  "description": "A self-hosted URL shortening Service.",
+  "repository": "https://github.com/th3c0d3br34ker/shortly-service",
+  "image": "heroku/nodejs"
+}

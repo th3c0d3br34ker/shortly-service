@@ -49,8 +49,8 @@ export abstract class BaseController {
     return BaseController.jsonSuccessResponse(res, 201, newObj);
   }
 
-  public static ok<T>(res: Response, dto?: T) {
-    return BaseController.jsonSuccessResponse(res, 200, dto);
+  public static ok<T>(res: Response, dto?: T, message?: string) {
+    return BaseController.jsonSuccessResponse(res, 200, dto, message);
   }
 
   public static error(res: Response, error: any) {

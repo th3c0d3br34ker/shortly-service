@@ -67,6 +67,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#deployment">Deployment</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -86,7 +87,8 @@ This projects is an REST API microservice to shorten URL.
 ### Built With
 
 - [Node.js](https://nodejs.org/en/)
-- [ExpressJS](http://expressjs.com/)
+- [ExpressJS](https://expressjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
 - [Heroku](https://heroku.com/)
 
 <!-- GETTING STARTED -->
@@ -116,6 +118,10 @@ To get a local copy up and running follow these simple steps.
    ```sh
    npm install
    ```
+
+### Deployment
+
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 <!-- USAGE EXAMPLES -->
 

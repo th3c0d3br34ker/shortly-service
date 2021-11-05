@@ -16,10 +16,11 @@ export interface UrlDTO {
 }
 
 export interface IUrlService {
-  addUrl(url: UrlDTO): Promise<UrlEntity>;
-
   findUrlById(id: Url["id"]): Promise<UrlEntity>;
+
+  addUrl(url: UrlDTO): Promise<UrlEntity>;
   findUrls(): Promise<UrlEntity[]>;
+  deleteUrl(id: Url["id"]): Promise<void>;
 }
 
 export class UrlService implements IUrlService {
@@ -102,6 +103,27 @@ export class UrlService implements IUrlService {
     } catch (err) {
       logger.error((err as Error).message, err);
       throw new Error("Unable to fetch Urls");
+    }
+  }
+
+  async deleteUrl(id: Url["id"]): Promise<void> {
+    try {
+      if (!validator.isUUID(id)) {
+        throw new NotFoundError("Url not found!");
+      }
+
+      const whereOptions: WhereOptions = { id };
+
+      const url = await this._urlModel.findOne({ where: whereOptions });
+
+      if (url === null) {
+        throw new NotFoundError("Url not found!");
+      }
+
+      await url.destroy();
+    } catch (err) {
+      logger.error((err as Error).message, err);
+      throw new Error("Unable to delete Url");
     }
   }
 }

@@ -72,3 +72,24 @@ export class FindUrlByIdController extends BaseController {
     }
   }
 }
+
+export class DeleteUrlByIdController extends BaseController {
+  private _urlService: IUrlService;
+
+  constructor(urlService: IUrlService) {
+    super();
+    this._urlService = urlService;
+  }
+  protected async executeImpl(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      await this._urlService.deleteUrl(id);
+
+      BaseController.ok(res, null, "Url deleted");
+    } catch (err) {
+      logger.error("delete-url-controller", err);
+      BaseController.fail(res, err as Error);
+    }
+  }
+}
