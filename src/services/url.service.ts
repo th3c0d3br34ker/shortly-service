@@ -4,13 +4,13 @@ import { Model, ModelCtor, WhereOptions } from "sequelize/types";
 
 // project imports
 import { Url, UrlEntity } from "../core/entities/url";
-import * as config from "../config";
 import { retryableDecorator } from "../utils";
 import logger from "../logger";
 import CoreError from "../core/errors";
 import { NotFoundError } from "../errors/api.error";
 
 export interface UrlDTO {
+  original_url: string;
   long_url: Url["long_url"];
   permanent: Url["permanent"];
 }
@@ -38,7 +38,7 @@ export class UrlService implements IUrlService {
       const urlEnitity = UrlEntity.create({
         ..._url,
         id: _id,
-        short_url: config.HOST_NAME + "/" + _id,
+        short_url: _url.original_url + "/" + _id,
         created_at: new Date(),
       });
       return self._urlModel.create(urlEnitity.toPersistant(), {

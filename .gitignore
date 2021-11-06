@@ -2,3 +2,5 @@ node_modules
 default.json
 .env
 test
+
+dist

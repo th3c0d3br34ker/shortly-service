@@ -15,10 +15,11 @@ export class AddUrlController extends BaseController {
 
   protected async executeImpl(req: Request, res: Response) {
     try {
-      const { long_url } = req.body;
+      const { original_url, long_url } = req.body;
       const permanent = req.body.permanent || false;
 
       const url = this._urlService.addUrl({
+        original_url,
         long_url,
         permanent,
       });
