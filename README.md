@@ -39,7 +39,7 @@
   <h3 align="center">Shortly - URL Shortening Microservice </h3>
 
   <p align="center">
-    An API microservice to shorten URLs.
+    An URL shortner using ReactJS, NodeJS and PostgreSQL.
     <br />
     <a href="https://github.com/th3c0d3br34ker/shortly-service"><strong>Explore the docs »</strong></a>
     <br />
@@ -70,11 +70,8 @@
         <li><a href="#deployment">Deployment</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
