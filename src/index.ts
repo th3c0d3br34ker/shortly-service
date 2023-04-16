@@ -1,14 +1,23 @@
 import http from "http";
-import { IS_TEST, SYNC_DB, PORT } from "./config";
+import {
+  IS_TEST,
+  SYNC_DB,
+  PORT,
+  CLEAR_INTERVAL_IN_MINUITES,
+  DATABASE_CONTEXT,
+  SERVER_CONTEXT,
+} from "./config";
 import logger from "./logger";
 
 // project imports
 import app from "./routes";
 import sequelizeDb from "./db";
+import { clearDatabase } from "./utils/clearDatabase";
+import { URL_MODEL_NAME } from "./db/constants";
 
 const server = http.createServer(app);
-const SERVER_CONTEXT = "EXPRESS SERVER";
-const DATABASE_CONTEXT = "DATABASE";
+
+let clearDatabaseService: NodeJS.Timer | null = null;
 
 async function startProcess() {
   try {
@@ -23,8 +32,22 @@ async function startProcess() {
       await sequelizeDb.sync(true);
     }
     server.listen(PORT, () => {
-      logger.info(SERVER_CONTEXT, `Server is listening on port ${PORT}.`);
+      logger.info(
+        SERVER_CONTEXT,
+        `🚀 Server listening on http://localhost:${PORT}.`
+      );
     });
+    clearDatabaseService = setInterval(() => {
+      clearDatabase(
+        sequelizeDb.getModel(URL_MODEL_NAME),
+        CLEAR_INTERVAL_IN_MINUITES
+      );
+    }, CLEAR_INTERVAL_IN_MINUITES);
+
+    logger.info(
+      SERVER_CONTEXT,
+      `Database clearing service scheduled to run every ${CLEAR_INTERVAL_IN_MINUITES} ms.`
+    );
   } catch (error) {
     logger.error(DATABASE_CONTEXT, "Unable to connect to the database:", error);
   }
@@ -38,6 +61,7 @@ async function stopProcess(err: boolean = false) {
   }
   stopped = true;
   logger.info(SERVER_CONTEXT, "Stopping server...");
+  clearDatabaseService && clearInterval(clearDatabaseService);
   await server.close();
   process.exit(err ? 1 : 0);
 }

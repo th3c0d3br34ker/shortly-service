@@ -1,18 +1,23 @@
-import { Model, Sequelize, DataTypes } from "sequelize";
+import { Model, Sequelize, DataTypes, Optional } from "sequelize";
 
 // project imports
 import { URL_MODEL_NAME, URL_TABLE_NAME } from "../constants";
+import { Url } from "../../core/entities/url";
 
-function makeExpenditureModel<T extends typeof DataTypes>(
+type UrlCreationAttributes = Optional<Url, "id">;
+
+function makeUrlModel<T extends typeof DataTypes>(
   sequelize: Sequelize,
   dataTypes: T
 ) {
-  class UrlModel extends Model {
+  class UrlModel extends Model<Url, UrlCreationAttributes> implements Url {
     public id!: string;
     public short_url!: string;
-    public long_url!: string;
+    public original_url!: string;
     public permanent!: boolean;
     public created_at!: Date;
+    public updated_at!: string | Date;
+    public deleted_at!: string | Date | null;
 
     public toJSON(): object {
       const values = Object.assign({}, this.get());
@@ -32,7 +37,7 @@ function makeExpenditureModel<T extends typeof DataTypes>(
         type: dataTypes.STRING,
         allowNull: false,
       },
-      long_url: {
+      original_url: {
         type: dataTypes.STRING,
         allowNull: false,
       },
@@ -43,6 +48,16 @@ function makeExpenditureModel<T extends typeof DataTypes>(
       created_at: {
         type: dataTypes.DATE,
         defaultValue: dataTypes.NOW,
+        allowNull: false,
+      },
+      updated_at: {
+        type: dataTypes.DATE,
+        defaultValue: dataTypes.NOW,
+        allowNull: false,
+      },
+      deleted_at: {
+        type: dataTypes.DATE,
+        allowNull: true,
       },
     },
     {
@@ -56,4 +71,4 @@ function makeExpenditureModel<T extends typeof DataTypes>(
   return UrlModel;
 }
 
-export default makeExpenditureModel;
+export default makeUrlModel;

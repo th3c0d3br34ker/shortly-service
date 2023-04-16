@@ -1,17 +1,20 @@
-import { v4 as uuidv4 } from "uuid";
-import validator from "validator";
-import { Model, ModelCtor, WhereOptions } from "sequelize/types";
+import { Model, ModelStatic, WhereOptions } from "sequelize/types";
 
 // project imports
 import { Url, UrlEntity } from "../core/entities/url";
-import { retryableDecorator } from "../utils";
+import { generateUuid as uuid, retryableDecorator } from "../utils";
 import logger from "../logger";
 import CoreError from "../core/errors";
-import { NotFoundError } from "../errors/api.error";
+import {
+  ApiError,
+  InternalServerError,
+  NotFoundError,
+} from "../errors/api.error";
+import { DB_ENTRIES_LIMIT, HOST_NAME } from "../config";
 
 export interface UrlDTO {
-  original_url: string;
-  long_url: Url["long_url"];
+  original_url: Url["original_url"];
+  long_url: Url["original_url"];
   permanent: Url["permanent"];
 }
 
@@ -24,22 +27,27 @@ export interface IUrlService {
 }
 
 export class UrlService implements IUrlService {
-  private readonly _urlModel: ModelCtor<Model>;
+  private readonly _urlModel: ModelStatic<Model>;
 
-  constructor(model: ModelCtor<Model>) {
+  constructor(model: ModelStatic<Model>) {
     this._urlModel = model;
   }
 
-  addUrl(url: UrlDTO): Promise<UrlEntity> {
+  async addUrl(url: UrlDTO): Promise<UrlEntity> {
     const self = this;
 
-    function tryInsert(_url: UrlDTO) {
-      const _id = uuidv4();
+    async function tryInsert(_url: UrlDTO) {
+      if ((await self._urlModel.count()) + 1 > DB_ENTRIES_LIMIT) {
+        throw new InternalServerError("Database is overflow, try again later.");
+      }
+
+      const _id = await uuid(self._urlModel);
       const urlEnitity = UrlEntity.create({
         ..._url,
         id: _id,
-        short_url: _url.original_url + "/" + _id,
+        short_url: HOST_NAME + "/" + _id,
         created_at: new Date(),
+        updated_at: new Date(),
       });
       return self._urlModel.create(urlEnitity.toPersistant(), {
         isNewRecord: true,
@@ -60,18 +68,23 @@ export class UrlService implements IUrlService {
       })
       .catch((err) => {
         logger.error(err);
-
         if (err instanceof CoreError) {
           throw err;
         }
-
+        if (err instanceof ApiError) {
+          throw err;
+        }
         throw new Error("Unable to create new Url");
       });
   }
 
   async findUrls(): Promise<UrlEntity[]> {
     try {
-      const urls = await this._urlModel.findAll({});
+      const where: WhereOptions = {
+        deleted_at: null,
+      };
+
+      const urls = await this._urlModel.findAll({ where });
       const urlEntities = urls.map((url) =>
         UrlEntity.create(url.toJSON() as Url)
       );
@@ -85,15 +98,15 @@ export class UrlService implements IUrlService {
 
   async findUrlById(id: Url["id"]): Promise<UrlEntity> {
     try {
-      if (!validator.isUUID(id)) {
-        throw new NotFoundError("Url not found!");
-      }
+      // if (!validate(id)) {
+      //   throw new NotFoundError('Url not found!');
+      // }
 
-      const whereOptions: WhereOptions = { id };
+      const where: WhereOptions = {
+        deleted_at: null,
+      };
 
-      const url = await this._urlModel.findOne({
-        where: whereOptions,
-      });
+      const url = await this._urlModel.findByPk(id, where);
 
       if (url === null) {
         throw new NotFoundError("Url not found!");
@@ -108,13 +121,11 @@ export class UrlService implements IUrlService {
 
   async deleteUrl(id: Url["id"]): Promise<void> {
     try {
-      if (!validator.isUUID(id)) {
-        throw new NotFoundError("Url not found!");
-      }
+      // if (!validate(id)) {
+      //   throw new NotFoundError('Url not found!');
+      // }
 
-      const whereOptions: WhereOptions = { id };
-
-      const url = await this._urlModel.findOne({ where: whereOptions });
+      const url = await this._urlModel.findByPk(id);
 
       if (url === null) {
         throw new NotFoundError("Url not found!");

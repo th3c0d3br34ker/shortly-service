@@ -11,8 +11,8 @@
     "prepare": "husky install"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "th3c0d3br34ker",
+  "license": "MIT",
   "lint-staged": {
     "*.ts": [
       "prettier --write"
@@ -27,12 +27,12 @@
     "node-fetch": "^2.6.1",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.8.0",
+    "sequelize": "^6.28.2",
     "shortid": "^2.2.16",
     "sqlite3": "^5.0.2",
+    "ts-node": "^10.4.0",
     "typescript": "^4.4.4",
-    "valid-url": "^1.0.9",
-    "validator": "^13.6.0"
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
@@ -50,8 +50,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^11.2.6",
     "nodemon": "^2.0.7",
-    "prettier": "^2.4.1",
-    "ts-node": "^10.4.0"
+    "prettier": "^2.4.1"
   },
   "packageManager": "yarn@3.1.0"
 }

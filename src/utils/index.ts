@@ -1,3 +1,6 @@
+import crypto from "crypto";
+import { Model, ModelStatic } from "sequelize";
+
 export function retryableDecorator(
   fn: CallableFunction,
   checkError: CallableFunction,
@@ -32,4 +35,21 @@ export function checkArrayOfStrings(array: any) {
     return false;
   }
   return array.every((item: any) => typeof item === "string");
+}
+
+export async function generateUuid(
+  urlMode: ModelStatic<Model>
+): Promise<string> {
+  // generate a random string of length 5
+  const randomString = crypto.randomBytes(3).toString("hex").substring(0, 5);
+  // check if the random string already exists in the collection
+  const existingUrl = await urlMode.findByPk(randomString);
+
+  if (existingUrl) {
+    // if the random string already exists, recursively call the function again to generate a new one
+    return await generateUuid(urlMode);
+  } else {
+    // if the random string doesn't exist, return it
+    return randomString;
+  }
 }

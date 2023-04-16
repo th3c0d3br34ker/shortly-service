@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { DataTypes, Options, Sequelize } from "sequelize";
+import { DataTypes, Dialect, Options, Sequelize } from "sequelize";
 import { DB_SSL } from "../config";
 import databaseConfig from "./config";
 import logger from "../logger";
@@ -9,7 +9,8 @@ const modelsPath = path.join(__dirname, "models");
 const models = Object.create(null);
 
 const databaseOptions: Options = {
-  dialect: "postgres",
+  dialect: databaseConfig.dialect as Dialect,
+  storage: databaseConfig.storage,
   logging: (msg: string) => logger.info("DATABASE", msg),
   define: {
     timestamps: true,
@@ -29,10 +30,9 @@ const databaseOptions: Options = {
   },
 };
 
-let sequelize: Sequelize = new Sequelize(
-  databaseConfig.databaseUrl,
-  databaseOptions
-);
+let sequelize: Sequelize = new Sequelize({
+  ...databaseOptions,
+});
 
 fs.readdirSync(modelsPath).forEach(async (file: string) => {
   const model = require(path.join(__dirname, "models", file)).default(

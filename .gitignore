@@ -3,6 +3,8 @@ node_modules
 
 .env
 
+*.sqlite3
+
 ### yarn ###
 # https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
 
