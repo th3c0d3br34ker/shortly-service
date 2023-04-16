@@ -21,14 +21,16 @@ let clearDatabaseService: NodeJS.Timer | null = null;
 
 async function startProcess() {
   try {
+    await sequelizeDb.checkDatabase();
     await sequelizeDb.authenticate();
+
     logger.debug(
       DATABASE_CONTEXT,
       "Connection has been established successfully."
     );
-    logger.debug(SERVER_CONTEXT, `Syncing DB... ${SYNC_DB}`);
 
     if (SYNC_DB) {
+      logger.debug(SERVER_CONTEXT, "Syncing DB...");
       await sequelizeDb.sync(true);
     }
     server.listen(PORT, () => {

@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { DataTypes, Dialect, Options, Sequelize } from "sequelize";
-import { DB_SSL } from "../config";
+import { DATABASE_CONTEXT, DB_SSL } from "../config";
 import databaseConfig from "./config";
 import logger from "../logger";
 
@@ -11,7 +11,7 @@ const models = Object.create(null);
 const databaseOptions: Options = {
   dialect: databaseConfig.dialect as Dialect,
   storage: databaseConfig.storage,
-  logging: (msg: string) => logger.info("DATABASE", msg),
+  logging: (msg: string) => logger.info(DATABASE_CONTEXT, msg),
   define: {
     timestamps: true,
     freezeTableName: true,
