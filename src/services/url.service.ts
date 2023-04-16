@@ -10,11 +10,13 @@ import {
   InternalServerError,
   NotFoundError,
 } from "../errors/api.error";
-import { DB_ENTRIES_LIMIT, HOST_NAME } from "../config";
+import { DB_ENTRIES_LIMIT } from "../config";
 
 export interface UrlDTO {
+  // host url is the url of the client
+  host_url: string;
+
   original_url: Url["original_url"];
-  long_url: Url["original_url"];
   permanent: Url["permanent"];
 }
 
@@ -45,7 +47,7 @@ export class UrlService implements IUrlService {
       const urlEnitity = UrlEntity.create({
         ..._url,
         id: _id,
-        short_url: HOST_NAME + "/" + _id,
+        short_url: _url.host_url + "/" + _id,
         created_at: new Date(),
         updated_at: new Date(),
       });
@@ -115,7 +117,10 @@ export class UrlService implements IUrlService {
       return UrlEntity.create(url.toJSON() as Url);
     } catch (err) {
       logger.error((err as Error).message, err);
-      throw new Error("Unable to fetch Urls");
+      if (err instanceof ApiError) {
+        throw err;
+      }
+      throw new Error("Unable to fetch Url by id");
     }
   }
 

@@ -1,5 +1,4 @@
 import { NextFunction, Router, Request, Response } from "express";
-import { validate } from "uuid";
 
 // project imports
 import {
@@ -13,7 +12,7 @@ import { BadRequestError } from "../errors/api.error";
 const router = Router();
 
 router.param("id", (_req: Request, _res: Response, next: NextFunction, id) => {
-  if (!validate(id)) {
+  if (typeof id !== "string" || id.length !== 5) {
     next(new BadRequestError("Invalid Short Url Id!"));
     return;
   }
