@@ -11,8 +11,8 @@ export async function clearDatabase(
     const where: WhereOptions = {
       created_at: {
         [Op.lt]: new Date(Date.now() - clearInterval),
-        permanent: false,
       },
+      permanent: false,
     };
 
     const result = await urlModel.destroy({
